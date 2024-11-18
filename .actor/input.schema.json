@@ -1,0 +1,32 @@
+{
+    "title": "Input schema for Instagram Video Downloader",
+    "description": "Provide the URL(s) of Instagram posts, reels, or videos to download. Configure optional settings if needed, and run the Actor to download the content.",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "instaUrl": {
+            "title": "Instagram URLs",
+            "type": "array",
+            "description": "One or more URLs of Instagram posts, reels, or videos to download. Each URL must point to a valid Instagram resource.",
+            "editor": "requestListSources",
+            "prefill": [{ "url": "https://www.instagram.com/reel/DAvv2RMpBJQ/" }]
+        },
+        "downloadFormat": {
+            "sectionCaption": "Download settings",
+            "title": "Download Format",
+            "type": "string",
+            "enum": ["mp4", "mp3"],
+            "enumTitles": ["Video (MP4)", "Audio (MP3)"],
+            "description": "Select the format for the downloaded content. Choose between video (MP4) or audio (MP3).",
+            "default": "mp4"
+        },
+        "maxVideos": {
+            "title": "Max videos to download",
+            "type": "integer",
+            "description": "The maximum number of videos to download. This setting helps control how many downloads are initiated from the provided URLs.",
+            "minimum": 1,
+            "default": 10
+        }
+    },
+    "required": ["instaUrl"]
+}

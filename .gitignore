@@ -1,0 +1,6 @@
+node_modules/
+.env
+# Added by Apify CLI
+storage
+node_modules
+.venv

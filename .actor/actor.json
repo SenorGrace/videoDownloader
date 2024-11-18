@@ -1,0 +1,11 @@
+{
+	"actorSpecification": 1,
+	"name": "instagram-video-downloader",
+	"version": "0.1",
+	"buildTag": "latest",
+	"source": "main.js",
+	"description": "Actor to download Instagram videos and reels",
+	"input": "./input.schema.json"
+  }
+  
+  

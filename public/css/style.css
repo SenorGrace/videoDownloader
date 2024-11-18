@@ -1,0 +1,458 @@
+@import url('https://fonts.googleapis.com/css2?family=Jacques+Francois+Shadow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Apply border-box to all elements */
+}
+
+html, body {
+    scroll-behavior: smooth;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; 
+}
+
+nav {
+    display: flex;
+    background-color: #f0f0f0;
+    position: sticky;
+    top: 0;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    justify-content: space-between;
+    z-index: 200;
+    width: 100%; /* Change from 100vw to 100% to avoid overflow */
+    max-width: 100%; /* Ensure nav doesn’t exceed 100% width */
+}
+
+.logo {
+    width: 70%;
+    height: auto;
+    margin-left: 5%;
+}
+
+.logo a {
+    text-decoration: none;
+    color: black;
+    font-size: 1rem;
+}
+
+.logo i {
+ font-size: larger;
+}
+
+#facil {
+    width: 50%;
+    text-align: center;
+    display: flex;          /* Use flexbox for layout */
+    justify-content: space-around;  /* Distribute space evenly between links */
+    align-items: center;    /* Center links vertically (optional) */
+}
+
+#facil a {
+    text-decoration: none;
+    color: rgb(73, 72, 72);
+    font-size: 0.9rem;
+}
+
+#facil a:hover {
+    cursor: pointer;
+    border-bottom: 1.5px solid black;
+}
+
+/* Hamburger menu styling */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    margin-right: 10%;
+}
+
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    margin: 4px 0;
+    transition: 0.4s;
+    text-align: center;
+}
+
+
+/* .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+} */
+
+.content {
+    text-align: center;
+    flex: 1; /* Allows the content to take up the available space */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+   
+}
+
+.jacques-francois-shadow-regular {
+    font-family: "Jacques Francois Shadow", serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-bottom: 2%;
+    font-size: 1.7rem;
+    margin-top: 6vh;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+input[type="url"] {
+    padding: 10px;
+    font-size: 16px;
+    width: 10rem;
+    border-radius: 1rem;
+    margin-top: 0.15rem;
+    margin-bottom: 0.15rem;
+    border: none;
+}
+
+input::placeholder {
+    text-align: center;
+}
+
+#input-container {
+    display: flex;
+    justify-content: center;  /* Center the input horizontally */
+    align-items: center;      /* Center the input vertically (if height is defined) */
+    height: auto;           /* Set a height for vertical centering (adjust as needed) */
+    background-color: rgb(151, 141, 141);
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 0.7rem;
+    width: 41vw;
+}
+
+#input-container input {
+    width: 40vw;
+    transition: width 0.3s ease, border-color 0.3s ease; /* Smooth transition for width and border */
+    outline: none;
+}
+
+#input-container input:hover,
+#input-container input:focus {
+  width: 35vw; /* Expanded width on hover or focus */
+  border-color: #007bff; /* Optional: Add a subtle border color on focus/hover */
+}
+
+#button-container {
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.6); /* Shadow effect */
+    transition: box-shadow 0.3s ease; /* Smooth transition on hover */
+}
+
+#button-container button:hover {
+    box-shadow: 4px 6px 15px rgba(0, 0, 0, 0.5); /* Enhance shadow on hover */
+  }
+
+#differentQualities {
+    flex-direction: row;
+    width: 50vw;
+    margin-bottom: 5%;
+}
+
+#differentQualities form {
+    margin: auto;
+}
+
+  /* Center the spinner */
+#spinner {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #3498db;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+#videoPlayer {
+    height: 50vh;
+}
+
+#learn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    border: o.5px solid rgb(28, 25, 25);
+    width: 80vw;
+    height: auto;
+    margin-bottom: 20vh;
+    margin-top: 7vh;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-radius: 2rem;
+    box-shadow: 4px 6px 15px rgba(0, 0, 0, 0.8); /* Enhance shadow on hover */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#g1 {
+    height: 40vh;
+    width: 35vw;
+    overflow: hidden; /* Ensures the image doesn't overflow the container */
+}
+
+#g1 img {
+    width: 100%;
+    height: 40vh; /* Maintains aspect ratio */
+}
+
+#g2 {
+    height: auto;
+    width: 35vw;
+    /* background-color: green; */
+}
+
+#g2 h2 {
+    text-align: center;
+    font-size: large;
+    margin-bottom: 1.5rem;
+}
+
+#g2 ul {
+    height: 30vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribute space evenly between the items */
+    padding-right: 15px; /*
+     Optional: Add some padding to avoid scrollbar overlap with text */
+     text-align: center;
+    list-style-type: none; /* Remove bullet points (optional) */
+     padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+#g2 ul li {
+    font-size: medium;
+    text-align: center;
+}
+
+#g2 ul a {
+    width: 15vw;
+    margin: auto;
+}
+
+#g2 ul a:hover {
+    margin: auto;
+    width: 50%;
+}
+
+#g2 ul button {
+    width: 15vw;
+    transition: background-color 0.3s ease-out; /* Smooth transition on hover */ 
+}
+
+#g2 ul button:hover {
+    width: 20vw;
+    background-color: #055fbf;
+}
+
+/* Footer styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100vw;
+    margin-top: 0rem;
+    z-index: 3000;
+}
+
+/* Social media icon styling */
+footer .social-media {
+    margin-bottom: 10px;
+}
+
+footer .social-media a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 24px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+footer .social-media a:hover {
+    color: #ff0000; /* Change to the color of your choice on hover */
+}
+
+/* Copyright styling */
+footer .copyright p {
+    margin: 0;
+    font-size: 14px;
+    color: #bbb;
+}
+
+/* Mobile responsiveness */
+/* Responsive styling */
+@media (max-width: 768px) {
+        /* Reset body and html */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        background-color: #333;
+        color: #fff;
+    }
+    
+    nav .logo a {
+        text-decoration: none;
+        font-size: 1.2em;
+        color: #fff;
+        font-weight: bold;
+    }
+    
+    nav #facil {
+        display: none; /* Hide nav links on mobile */
+        width: 100vw;
+        flex-direction: column;
+        background: #444;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        z-index: 10;
+        border-radius: 0.3rem;
+        overflow: hidden;
+        margin-left: none;
+    }
+    
+    nav #facil a {
+        color: #fff;
+        padding: 10px 15px;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+    
+    nav #facil.show {
+        display: flex; /* Show nav links when toggled */
+    }
+    
+    nav .hamburger {
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    nav .hamburger .bar {
+        width: 25px;
+        height: 3px;
+        background-color: #fff;
+    }
+
+    .jacques-francois-shadow-regular {
+        font-size: 1.3rem;
+    }
+
+    #videoPlayer {
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%; /* Full width on smaller screens */
+        max-width: 100%; /* Remove any max-width restrictions */
+    }
+
+    #learn {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #g1 {
+        width: 100%;
+        height: 50vh;
+    }
+
+    #g1 img {
+        width: 100%;
+        height: 80%;
+    }
+
+    #g2 {
+        width: 100%;
+    }
+
+    #g2 h2 {
+        width: 100%;
+        margin-top: -2rem;
+        font-size: large;
+    }
+
+    #g2 ul a {
+        width: 100%;
+    }
+
+    #g2 ul button {width: 50%;}
+
+    footer .social-media a {
+        font-size: 20px;
+        margin: 0 8px;
+    }
+
+    footer .copyright p {
+        font-size: 12px;
+    }
+}
+
+
+
+

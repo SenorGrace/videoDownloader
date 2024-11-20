@@ -216,6 +216,8 @@ button {
 
 #videoPlayer {
     height: 50vh;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #learn {
@@ -411,6 +413,7 @@ footer .copyright p {
         width: 80%; /* Full width on smaller screens */
         max-width: 100%; /* Remove any max-width restrictions */
     }
+
 
     #learn {
         display: flex;

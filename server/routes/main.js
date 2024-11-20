@@ -452,7 +452,7 @@ router.post('/getFormats', (req, res) => {
 
 router.post('/download-instaVideo', async (req, res) => {
     console.log('Received request to download Instagram video'); 
-    const youtubeUrl  = req.body.instaUrl;
+    const instaUrl  = req.body.instaUrl;
 
     if (!instaUrl) {
         return res.status(400).send('Please provide a valid Instagram video URL.');

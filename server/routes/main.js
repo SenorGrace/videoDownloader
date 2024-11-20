@@ -56,7 +56,7 @@ router.get('/youtube', (req, res) => {
 
 // Route for Instagram page
 router.get('/instagram', (req, res) => {
-    res.render('instagram'); // Assuming you have an 'instagram.ejs' template
+    res.render('index'); // on the request of the instagram route /instagram, the index page, designed with instagram page pattern is displayed 
 });
 
 // Route for Twitter page

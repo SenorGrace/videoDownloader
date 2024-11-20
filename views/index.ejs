@@ -7,35 +7,21 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <h1 class="jacques-francois-shadow-regular">YouTube Video Downloader</h1>
+    <h1 class="jacques-francois-shadow-regular">Instagram Video Downloader</h1>
 
     <!-- Video thumbnail preview -->
     <img id="thumbnail" src="" alt="Video Thumbnail" style="display:none; width: 300px;">
 
-    <!-- Form for entering the YouTube URL -->
-    
+    <!-- Form for entering the Instagram URL -->
+    <form id="download-form" action="/download-instaVideo" method="POST">
         <div id="input-container">
-            <input type="url" id="videoUrl" name="youtubeUrl" placeholder="Paste download link here" required>
+            <input type="url" id="videoUrl" name="instaUrl" placeholder="Paste download link here" required>
         </div>
         <div id="button-container">
-            <button type="submit" id="download-btn">Choose Quality</button>
+            <button type="submit">Download Video</button>
             <button type="button" id="play-btn">Play Video</button>
         </div>
-
-        <div id="differentQualities" style="display: none;">
-            <form action="/lowest-youtubequality" method="post">
-                <button type="submit">lowest</button>
-            </form>
-            <form action="/medium-youtubequality" method="post">
-                <button type="submit">medium</button>
-            </form>
-            <form action="/high-youtubequality" method="post">
-                <button type="submit">high</button>
-            </form>
-            <form action="/highest-youtubequality" method="post">
-                <button type="submit">Highest(Data demanding)</button>
-            </form>
-        </div>
+    </form>
 
         <!-- Spinner for loading indication -->
 <div id="spinner" style="display: none;">
@@ -53,7 +39,7 @@
             <img src="img/7b5acbb82e3d4813949324231862c25b.jpg" alt="consistency and faith">
         </div>
         <div id="g2">
-            <h2>Learn More About YouTube Downloads</h2>
+            <h2>Learn More About Instagram Downloads</h2>
             <ul>
                 <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. </li>
                 <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. </li>
@@ -111,48 +97,6 @@
             }
         });
 
-          // Toggle "Choose Quality" and "differentQualities"
-          document.getElementById('download-btn').addEventListener('click', function () {
-            // Hide the "Choose Quality" button
-            document.getElementById('download-btn').style.display = 'none';
-            
-            // Show the "differentQualities" div
-            document.getElementById('differentQualities').style.display = 'flex';
-        });
-
-        // Add event listeners to dynamically include the video URL in each form submission
-    document.querySelectorAll('#differentQualities form').forEach((form) => {
-        form.addEventListener('submit', function (event) {
-            // Prevent form submission if the video URL is empty
-            const videoUrl = document.getElementById('videoUrl').value;
-            if (!videoUrl) {
-                event.preventDefault(); // Stop form submission
-                alert('Please enter a video URL to proceed.');
-                return;
-            }
-
-            // Create a hidden input field if not already present
-            let hiddenInput = form.querySelector('input[name="youtubeUrl"]');
-            if (!hiddenInput) {
-                hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'youtubeUrl';
-                form.appendChild(hiddenInput);
-            }
-
-            // Set the value of the hidden input field to the video URL
-            hiddenInput.value = videoUrl;
-        });
-    });
-
-    // Toggle "Choose Quality" and "differentQualities"
-    document.getElementById('download-btn').addEventListener('click', function () {
-        // Hide the "Choose Quality" button
-        document.getElementById('download-btn').style.display = 'none';
-
-        // Show the "differentQualities" div
-        document.getElementById('differentQualities').style.display = 'flex';
-    });
     </script>
 </body>
 </html>

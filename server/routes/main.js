@@ -85,7 +85,8 @@ router.post('/playYoutubeVideo', (req, res) => {
     }
 
     // Use yt-dlp to get the direct video URL without downloading
-    const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+    const getUrlCommand = `yt-dlp --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+
     exec(getUrlCommand, (error, stdout, stderr) => {
         if (error) {
             console.error('Error retrieving video URL:', error);

@@ -4,4 +4,4 @@ node_modules/
 storage
 node_modules
 .venv
-"server/Downloads/*.mp4" 
+server/Downloads 

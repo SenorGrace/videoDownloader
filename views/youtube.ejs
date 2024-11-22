@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader and Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1 class="jacques-francois-shadow-regular">YouTube Video Downloader</h1>
+
+    <!-- Video thumbnail preview -->
+    <img id="thumbnail" src="" alt="Video Thumbnail" style="display:none; width: 300px;">
+
+    <!-- Form for entering the YouTube URL -->
+    
+        <div id="input-container">
+            <input type="url" id="videoUrl" name="youtubeUrl" placeholder="Paste download link here" required>
+        </div>
+        <div id="button-container">
+            <button type="submit" id="download-btn">Choose Quality</button>
+            <button type="button" id="play-btn">Play Video</button>
+        </div>
+
+        <div id="differentQualities" style="display: none;">
+            <form action="/lowest-youtubequality" method="post">
+                <button type="submit">lowest</button>
+            </form>
+            <form action="/medium-youtubequality" method="post">
+                <button type="submit">medium</button>
+            </form>
+            <form action="/high-youtubequality" method="post">
+                <button type="submit">high</button>
+            </form>
+            <form action="/highest-youtubequality" method="post">
+                <button type="submit">Highest(Data demanding)</button>
+            </form>
+        </div>
+
+        <!-- Spinner for loading indication -->
+<div id="spinner" style="display: none;">
+    <div class="loader"></div>
+</div>
+
+    <!-- Video player div -->
+<div id="video-player-container" style="display: none;">
+    <video id="videoPlayer" controls width="800"></video>
+</div>
+    
+
+    <div id="learn">
+        <div id="g1">
+            <img src="img/7b5acbb82e3d4813949324231862c25b.jpg" alt="consistency and faith">
+        </div>
+        <div id="g2">
+            <h2>Learn More About YouTube Downloads</h2>
+            <ul>
+                <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. </li>
+                <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. </li>
+                <a href="/learn-more"><button>Learn More</button></a>
+            </ul>
+            
+        </div>
+    </div>
+   
+
+    <script>
+        document.getElementById('play-btn').addEventListener('click', async function () {
+            const videoUrl = document.getElementById('videoUrl').value;
+    
+            // Check if the video URL is provided
+            if (!videoUrl) {
+                alert('Please enter a video URL to play.');
+                return;
+            }
+
+               // Show the spinner
+               document.getElementById('spinner').style.display = 'block';
+    
+            try {
+                // Send a POST request to get the direct video URL
+                const response = await fetch('/playYoutubeVideo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ videoUrl })
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Failed to retrieve video URL.');
+                }
+    
+                const data = await response.json();
+                const videoPlayer = document.getElementById('videoPlayer');
+                
+                // Set the video player's source to the retrieved URL and play the video
+                videoPlayer.src = data.directVideoUrl;
+
+                 // Play the video when it's ready
+                 videoPlayer.onloadeddata = () => {
+                // Hide the spinner once video starts playing
+                document.getElementById('spinner').style.display = 'none';
+                videoPlayer.style.display = 'block';
+                videoPlayer.play();
+            };
+    
+                // Display the video player container
+                document.getElementById('video-player-container').style.display = 'block';
+            } catch (error) {
+                console.error('Error playing video:', error);
+                alert('Failed to play video. Please check the console for more details.');
+            }
+        });
+
+          // Toggle "Choose Quality" and "differentQualities"
+          document.getElementById('download-btn').addEventListener('click', function () {
+            // Hide the "Choose Quality" button
+            document.getElementById('download-btn').style.display = 'none';
+            
+            // Show the "differentQualities" div
+            document.getElementById('differentQualities').style.display = 'flex';
+        });
+
+        // Add event listeners to dynamically include the video URL in each form submission
+    document.querySelectorAll('#differentQualities form').forEach((form) => {
+        form.addEventListener('submit', function (event) {
+            // Prevent form submission if the video URL is empty
+            const videoUrl = document.getElementById('videoUrl').value;
+            if (!videoUrl) {
+                event.preventDefault(); // Stop form submission
+                alert('Please enter a video URL to proceed.');
+                return;
+            }
+
+            // Create a hidden input field if not already present
+            let hiddenInput = form.querySelector('input[name="youtubeUrl"]');
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'youtubeUrl';
+                form.appendChild(hiddenInput);
+            }
+
+            // Set the value of the hidden input field to the video URL
+            hiddenInput.value = videoUrl;
+        });
+    });
+
+    // Toggle "Choose Quality" and "differentQualities"
+    document.getElementById('download-btn').addEventListener('click', function () {
+        // Hide the "Choose Quality" button
+        document.getElementById('download-btn').style.display = 'none';
+
+        // Show the "differentQualities" div
+        document.getElementById('differentQualities').style.display = 'flex';
+    });
+    </script>
+</body>
+</html>

@@ -51,7 +51,7 @@ router.get('/', (req, res) => {
 
 // Route for YouTube page
 router.get('/youtube', (req, res) => {
-    res.render('index'); // Assuming you have a 'youtube.ejs' template
+    res.render('youtube'); // Assuming you have a 'youtube.ejs' template
 });
 
 // Route for Instagram page
@@ -75,6 +75,30 @@ router.get('/learn-more', (req, res) => {
 
 router.get('/about', (req, res) => {
     res.render('about'); // Assuming you have an 'about.ejs' template
+});
+
+router.post('/playYoutubeVideo', (req, res) => {
+    const videoUrl = req.body.videoUrl;
+
+    if (!videoUrl) {
+        return res.status(400).send('Please provide a valid video URL.');
+    }
+
+    // Use yt-dlp to get the direct video URL without downloading
+    const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+    exec(getUrlCommand, (error, stdout, stderr) => {
+        if (error) {
+            console.error('Error retrieving video URL:', error);
+            return res.status(500).send('Failed to retrieve video URL.');
+        }
+
+        if (stderr) {
+            console.log('yt-dlp stderr:', stderr);
+        }
+
+        const directVideoUrl = stdout.trim(); // Get the direct URL
+        res.json({ directVideoUrl }); // Send the URL to the client
+    });
 });
 
 router.post('/lowest-youtubequality', async (req, res) => {

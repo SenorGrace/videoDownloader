@@ -213,7 +213,7 @@ router.get('/about', (req, res) => {
 
 async function loginAndSaveCookies() {
     const browser = await playwright.chromium.launch({
-                 headless: false,
+                 headless: true,
                  args: [
                      '--no-sandbox',
                      '--disable-setuid-sandbox',

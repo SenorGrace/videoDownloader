@@ -489,12 +489,20 @@ router.post('/medium-youtubequality', async (req, res) => {
 });
 
 router.post('/high-youtubequality', async (req, res) => {
-    console.log('Received request to download youtube video'); 
-    const youtubeUrl  = req.body.youtubeUrl;
-    console.log("The youtube url received at router.post('/high-youtubequality is: ", youtubeUrl)
+    console.log('Received request to download YouTube video'); 
+    const youtubeUrl = req.body.youtubeUrl;
+    console.log("The YouTube URL received at router.post('/high-youtubequality') is:", youtubeUrl);
 
     if (!youtubeUrl) {
-        return res.status(400).send('Please provide a valid youtube video URL.');
+        return res.status(400).send('Please provide a valid YouTube video URL.');
+    }
+
+    const username = process.env.YOUTUBE_USERNAME;
+    const password = process.env.YOUTUBE_PASSWORD;
+
+    if (!username || !password) {
+        console.error('YouTube credentials are not set in environment variables.');
+        return res.status(500).send('YouTube credentials are missing. Please configure them securely.');
     }
 
     try {
@@ -504,12 +512,16 @@ router.post('/high-youtubequality', async (req, res) => {
             fs.mkdirSync(outputDir, { recursive: true });
         }
 
-        // Step 1: Extract video title using yt-dlp
-        const getTitleCommand = `yt-dlp --get-title "${youtubeUrl}"`;
+        // Step 1: Extract video title using yt-dlp with authentication
+        const getTitleCommand = `yt-dlp --username "${username}" --password "${password}" --get-title "${youtubeUrl}"`;
         exec(getTitleCommand, (titleError, titleStdout, titleStderr) => {
             if (titleError) {
-                console.error('Error retrieving youtube video title:', titleError);
+                console.error('Error retrieving YouTube video title:', titleError);
                 return res.status(500).send('Failed to retrieve video title.');
+            }
+            if (titleStderr.includes('Sign in')) {
+                console.error('Authentication or CAPTCHA required:', titleStderr);
+                return res.status(500).send('Authentication or CAPTCHA required. Check logs for details.');
             }
             if (titleStderr) {
                 console.log('yt-dlp title stderr:', titleStderr);
@@ -518,16 +530,18 @@ router.post('/high-youtubequality', async (req, res) => {
             const videoTitle = titleStdout.trim().replace(/[/\\?%*:|"<>]/g, '-'); // Sanitize the title for file system compatibility
             const outputPath = path.join(outputDir, `${videoTitle}.mp4`);
 
-            // Step 2: Download the video using the extracted title
-            const downloadCommand = `yt-dlp -f "bestvideo[height<=720]+bestaudio[ext=m4a]/best[height<=7200]" --merge-output-format mp4 -o "${outputPath}" "${youtubeUrl}"`;
-
-            // const downloadCommand = `yt-dlp -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4" --merge-output-format mp4 -o "${outputPath}" "${youtubeUrl}"`;
+            // Step 2: Download the video using the extracted title with authentication
+            const downloadCommand = `yt-dlp --username "${username}" --password "${password}" -f "bestvideo[height<=720]+bestaudio[ext=m4a]/best[height<=720]" --merge-output-format mp4 -o "${outputPath}" "${youtubeUrl}"`;
             console.log('Executing yt-dlp command:', downloadCommand);
 
             exec(downloadCommand, (downloadError, downloadStdout, downloadStderr) => {
                 if (downloadError) {
                     console.error('Error downloading video:', downloadError);
-                    return res.status(500).send('Failed to download the TikTok video.');
+                    return res.status(500).send('Failed to download the YouTube video.');
+                }
+                if (downloadStderr.includes('CAPTCHA')) {
+                    console.error('CAPTCHA prompt detected. Unable to proceed:', downloadStderr);
+                    return res.status(500).send('CAPTCHA prompt detected. Authentication failed.');
                 }
 
                 console.log('yt-dlp download output:', downloadStdout);
@@ -540,7 +554,7 @@ router.post('/high-youtubequality', async (req, res) => {
                     if (err) {
                         console.error('Error sending the file to client:', err);
                     } else {
-                        console.log('youtube video File sent successfully');
+                        console.log('YouTube video file sent successfully');
                         // Delete the file after sending
                         fs.unlink(outputPath, (unlinkErr) => {
                             if (unlinkErr) {
@@ -554,8 +568,8 @@ router.post('/high-youtubequality', async (req, res) => {
             });
         });
     } catch (error) {
-        console.error('Error processing youtube download:', error);
-        res.status(500).send('Failed to download the youtube video.');
+        console.error('Error processing YouTube download:', error);
+        res.status(500).send('Failed to download the YouTube video.');
     }
 });
 

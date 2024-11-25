@@ -42,8 +42,8 @@ const {
 const { chromium } = require('playwright'); // Ensure Playwright is installed
 
 // Path to store the YouTube cookies
-const cookiesFilePath = path.resolve(__dirname, 'youtube_cookie.txt');
-const screenShot = path.resolve(__dirname, 'screenshots');
+const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
+// const screenShot = path.resolve(__dirname, 'screenshots');
 
 
 const { exec } = require('child_process');

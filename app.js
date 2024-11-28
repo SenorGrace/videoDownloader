@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, 'Downloaded')));
 app.use('/', require('./server/routes/main'));
 
 // Start the server
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 }).on('error', (err) => {
     console.error('Server error:', err);

@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "npx playwright install && cross-env DEBUG=playwright* nodemon app.js"
-  },
+  "install-deps": "npx playwright install-deps",
+  "start": "npx playwright install && cross-env DEBUG=playwright* nodemon app.js"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",

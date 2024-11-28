@@ -42,7 +42,7 @@ const {
 const { chromium } = require('playwright'); // Ensure Playwright is installed
 
 // Path to store the YouTube cookies
-const cookiesFilePath = '/tmp/youtube_cookie.txt';
+const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
 // const screenShot = path.resolve(__dirname, 'screenshots');
 
 
@@ -89,222 +89,98 @@ router.get('/about', (req, res) => {
 
 // async function loginAndSaveCookies() {
 //     const browser = await playwright.chromium.launch({
-//         headless: false,
-//         args: [
-//             '--no-sandbox',
-//             '--disable-setuid-sandbox',
-//             '--disable-blink-features=AutomationControlled',
-//             '--disable-extensions',
-//             '--start-maximized',
-//             '--disable-dev-shm-usage',
-//         ],
-//     });
-    
-//     const context = await browser.newContext();
-//     const page = await context.newPage();
+//                  headless: true,
+//                  args: [
+//                      '--no-sandbox',
+//                      '--disable-setuid-sandbox',
+//                      '--disable-blink-features=AutomationControlled',
+//                      '--disable-extensions',
+//                      '--start-maximized',
+//                      '--disable-dev-shm-usage',
+//                  ],
+//              });
+            
+//              const context = await browser.newContext();
+//              const page = await context.newPage();
 
-//     try {
-//         console.log("Checking for existing login session...");
-//         await page.goto('https://myaccount.google.com/', { waitUntil: 'networkidle' });
+//              await page.goto('https://www.youtube.com', { waitUntil: 'networkidle' });
 
-//         const selectors = [
-//             'a[href*="SignOutOptions"]',
-//             'img[alt*="Google Account"]',
-//             'div[data-email]',
-//             'a[href*="accounts.google.com/SignOut"]'
-//         ];
+//              const cookies = await context.cookies();
+//                             //   console.log("Cookies extracted from YouTube:", cookies);
+//                               saveCookiesToFile(cookies);
+//                               await browser.close();
         
-//         const loggedIn = (await Promise.all(
-//             selectors.map(selector => page.isVisible(selector))
-//         )).some(Boolean); // Check if any selector is visible
-        
-//         if (loggedIn) {
-//             console.log("User is already logged in.");
-
-//             const accountEmail = await page.textContent('div:has-text("Signed in as") span');
-//             console.log(`Logged-in account: ${accountEmail}`);
-
-//             if (accountEmail === process.env.YOUTUBE_EMAIL) {
-//                 console.log("Correct account already logged in. Proceeding to YouTube...");
-                
-//                 // Navigate to YouTube after confirming the login
-//                 await page.goto('https://www.youtube.com', { waitUntil: 'networkidle' });
-
-//                 // Check if the correct account is logged in on YouTube
-//                 const userAvatar = await page.$('ytd-topbar-menu-button-renderer#avatar-btn');
-//                 if (userAvatar) {
-//                     console.log("YouTube: Successfully logged in with the correct account.");
-
-//                     // Save cookies from YouTube after successful login
-//                     const cookies = await context.cookies();
-//                     console.log("Cookies extracted from YouTube:", cookies);
-//                     saveCookiesToFile(cookies);
-//                     return; // Exit the function after saving cookies
-//                 } else {
-//                     throw new Error("Not logged into YouTube. Manual intervention may be needed.");
-//                 }
-//             } else {
-//                 throw new Error(`Logged in with a different account: ${accountEmail}. Please log out and retry.`);
-//             }
-//         }
-
-//         console.log("No active session or not logged in. Proceeding to login...");
-//         await page.goto('https://accounts.google.com/signin', { waitUntil: 'networkidle' });
-
-//         // Wait and enter email
-//         await page.waitForSelector('input[type="email"]');
-//         await page.fill('input[type="email"]', process.env.YOUTUBE_EMAIL);
-//         await page.click('button:has-text("Next")');
-//         await page.waitForTimeout(2000);
-
-//         // Wait and enter password
-//         await page.waitForSelector('input[type="password"]', { timeout: 60000 });
-//         await page.fill('input[type="password"]', process.env.YOUTUBE_PASSWORD);
-//         await page.click('button:has-text("Next")');
-
-//         page.on('dialog', async dialog => {
-//             console.log('Dialog message:', dialog.message());
-//             await dialog.dismiss();
-//         });
-        
-//         if (await page.$('#captcha')) {
-//             console.log('Captcha detected. Manual intervention needed.');
-//         }
-        
-//         // Handle security prompts
-//         if (await page.isVisible('text="Save"')) {
-//             await page.click('text="Save"');
-//         } else if (await page.isVisible('text="Cancel"')) {
-//             await page.click('text="Cancel"');
-//         }
-
-//         if (await page.isVisible('text="Not Now"')) {
-//             await page.click('text="Not Now"');
-//         }
-
-//         // Check login success
-//         if (page.url().includes('myaccount.google.com')) {
-//             console.log("Successfully logged in!");
-
-//             // Now navigate to YouTube and ensure successful login there as well
-//             await page.goto('https://www.youtube.com', { waitUntil: 'networkidle' });
-
-//             // Check if the correct account is logged in on YouTube
-//             const userAvatar = await page.$('ytd-topbar-menu-button-renderer#avatar-btn');
-//             if (userAvatar) {
-//                 console.log("YouTube: Successfully logged in with the correct account.");
-
-//                 // Save cookies from YouTube after successful login
-//                 const cookies = await context.cookies();
-//                 console.log("Cookies extracted from YouTube:", cookies);
-//                 saveCookiesToFile(cookies);
-//             } else {
-//                 throw new Error("Not logged into YouTube. Manual intervention may be needed.");
-//             }
-//         } else {
-//             throw new Error("Login failed. Check credentials or security prompts.");
-//         }
-//     } catch (error) {
-//         console.error("Error during YouTube login:", error);
-//     } finally {
-//         await browser.close();
-//     }
 // }
 
-async function loginAndSaveCookies() {
-    const browser = await playwright.chromium.launch({
-                 headless: true,
-                 args: [
-                     '--no-sandbox',
-                     '--disable-setuid-sandbox',
-                     '--disable-blink-features=AutomationControlled',
-                     '--disable-extensions',
-                     '--start-maximized',
-                     '--disable-dev-shm-usage',
-                 ],
-             });
-            
-             const context = await browser.newContext();
-             const page = await context.newPage();
-
-             await page.goto('https://www.youtube.com', { waitUntil: 'networkidle' });
-
-             const cookies = await context.cookies();
-                            //   console.log("Cookies extracted from YouTube:", cookies);
-                              saveCookiesToFile(cookies);
-                              await browser.close();
-        
-}
-
-function saveCookiesToFile(cookies) {
-    const netscapeFormat = cookies
-        .filter(cookie => cookie.expires && cookie.expires > Date.now()) // Remove invalid or expired cookies
-        .map(cookie => {
-            const expires = Math.floor(cookie.expires || 0); // Ensure valid integer expiration
-            return `${cookie.domain}\tTRUE\t${cookie.path}\t${cookie.secure}\t${expires}\t${cookie.name}\t${cookie.value}`;
-        })
-        .join('\n');
+// function saveCookiesToFile(cookies) {
+//     const netscapeFormat = cookies
+//         .filter(cookie => cookie.expires && cookie.expires > Date.now()) // Remove invalid or expired cookies
+//         .map(cookie => {
+//             const expires = Math.floor(cookie.expires || 0); // Ensure valid integer expiration
+//             return `${cookie.domain}\tTRUE\t${cookie.path}\t${cookie.secure}\t${expires}\t${cookie.name}\t${cookie.value}`;
+//         })
+//         .join('\n');
     
-    fs.writeFileSync(cookiesFilePath, `# Netscape HTTP Cookie File\n${netscapeFormat}`);
-    console.log("Updated cookies saved to:", cookiesFilePath);
-}
+//     fs.writeFileSync(cookiesFilePath, `# Netscape HTTP Cookie File\n${netscapeFormat}`);
+//     console.log("Updated cookies saved to:", cookiesFilePath);
+// }
 
-function areCookiesValid() {
-    if (!fs.existsSync(cookiesFilePath)) {
-        console.error("Cookies file not found.");
-        return false;
-    }
+// function areCookiesValid() {
+//     if (!fs.existsSync(cookiesFilePath)) {
+//         console.error("Cookies file not found.");
+//         return false;
+//     }
 
-    try {
-        const cookiesData = fs.readFileSync(cookiesFilePath, 'utf-8').trim();
+//     try {
+//         const cookiesData = fs.readFileSync(cookiesFilePath, 'utf-8').trim();
 
-        // console.log('at the function areCookiesValid(), const cookiesData is', cookiesData);
+//         // console.log('at the function areCookiesValid(), const cookiesData is', cookiesData);
 
-        if (!cookiesData) {
-            console.error("Cookies file is empty.");
-            return false;
-        }
+//         if (!cookiesData) {
+//             console.error("Cookies file is empty.");
+//             return false;
+//         }
 
-        if (cookiesData.startsWith("# Netscape")) {
-            // Handle Netscape format
-            const jar = new CookieJar();
-            console.log('at the function areCookiesValid(), const jar is', jar);
-            cookiesData.split('\n').forEach(line => {
-                if (line && !line.startsWith('#')) {
-                    try {
-                        const cookie = Cookie.parse(line);
-                        if (cookie) jar.setCookieSync(cookie, 'https://www.youtube.com');
-                    } catch (e) {
-                        console.warn(`Error parsing cookie line: ${line}`, e.message);
-                    }
-                }
-            });
+//         if (cookiesData.startsWith("# Netscape")) {
+//             // Handle Netscape format
+//             const jar = new CookieJar();
+//             console.log('at the function areCookiesValid(), const jar is', jar);
+//             cookiesData.split('\n').forEach(line => {
+//                 if (line && !line.startsWith('#')) {
+//                     try {
+//                         const cookie = Cookie.parse(line);
+//                         if (cookie) jar.setCookieSync(cookie, 'https://www.youtube.com');
+//                     } catch (e) {
+//                         console.warn(`Error parsing cookie line: ${line}`, e.message);
+//                     }
+//                 }
+//             });
 
-            const cookies = jar.getCookiesSync('https://www.youtube.com');
-            // console.log('at the function areCookiesValid(), const cookies is', cookies);
-            return cookies.some(cookie => cookie.key === 'SID' && cookie.expires && cookie.expires > new Date());
-        } else {
-            // Handle JSON format
-            let parsedData;
-            console.log('at the function areCookiesValid(), let parsedData is', parsedData);
-            try {
-                parsedData = JSON.parse(cookiesData);
-            } catch (error) {
-                console.error("Error parsing cookies JSON:", error.message);
-                return false;
-            }
+//             const cookies = jar.getCookiesSync('https://www.youtube.com');
+//             // console.log('at the function areCookiesValid(), const cookies is', cookies);
+//             return cookies.some(cookie => cookie.key === 'SID' && cookie.expires && cookie.expires > new Date());
+//         } else {
+//             // Handle JSON format
+//             let parsedData;
+//             console.log('at the function areCookiesValid(), let parsedData is', parsedData);
+//             try {
+//                 parsedData = JSON.parse(cookiesData);
+//             } catch (error) {
+//                 console.error("Error parsing cookies JSON:", error.message);
+//                 return false;
+//             }
 
-            const jar = CookieJar.deserializeSync(parsedData);
-            console.log('at the function areCookiesValid(), new declaration of const jar is', jar);
-            const cookies = jar.getCookiesSync('https://www.youtube.com');
-            // console.log('at the function areCookiesValid(), new declaration of const cookies is', cookies);
-            return cookies.some(cookie => cookie.key === 'SID' && cookie.expires && cookie.expires > new Date());
-        }
-    } catch (error) {
-        console.error("Error reading cookies file:", error);
-        return false;
-    }
-}
+//             const jar = CookieJar.deserializeSync(parsedData);
+//             console.log('at the function areCookiesValid(), new declaration of const jar is', jar);
+//             const cookies = jar.getCookiesSync('https://www.youtube.com');
+//             // console.log('at the function areCookiesValid(), new declaration of const cookies is', cookies);
+//             return cookies.some(cookie => cookie.key === 'SID' && cookie.expires && cookie.expires > new Date());
+//         }
+//     } catch (error) {
+//         console.error("Error reading cookies file:", error);
+//         return false;
+//     }
+// }
 
 
 
@@ -316,15 +192,8 @@ router.post('/playYoutubeVideo', async (req, res) => {
     }
 
     try {
-        // Check if cookies are valid
-        if (!areCookiesValid()) {
-            console.log("Cookies are invalid or missing. Logging in...");
-            await loginAndSaveCookies();
-        }
-
-        // Use yt-dlp with cookies
         const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
-        
+
         console.log('at /playYoutubeVideo, const getUrlCommand is', getUrlCommand);
 
         exec(getUrlCommand, (error, stdout, stderr) => {

@@ -43,6 +43,7 @@ const { chromium } = require('playwright'); // Ensure Playwright is installed
 
 // Path to store the YouTube cookies
 const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
+// const cookiesFilePath = '../youtube_cookie.txt';
 // const screenShot = path.resolve(__dirname, 'screenshots');
 
 
@@ -192,7 +193,8 @@ router.post('/playYoutubeVideo', async (req, res) => {
     }
 
     try {
-        const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        // const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
 
         console.log('at /playYoutubeVideo, const getUrlCommand is', getUrlCommand);
 

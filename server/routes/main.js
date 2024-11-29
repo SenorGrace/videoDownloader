@@ -210,7 +210,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
       
 
     try {
-        const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" --no-cookie-file -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
 
         console.log('at /playYoutubeVideo, const getUrlCommand is', getUrlCommand);
@@ -226,7 +226,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
             }
 
             if (error) {
-                console.log(`error from /playvideo is: ${error}`);
+                console.log(`error from /playvideo is: ${error.message}`);
             }
 
             const directVideoUrl = stdout.trim(); // Get the direct URL

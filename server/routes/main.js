@@ -210,15 +210,17 @@ router.post('/playYoutubeVideo', async (req, res) => {
       
 
     try {
-        const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" --no-cookie-file -f "best[ext=mp4]" --get-url "${videoUrl}"`;
-        // const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        // const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" --no-cookie-file -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        
 
         console.log('at /playYoutubeVideo, const getUrlCommand is', getUrlCommand);
 
         exec(getUrlCommand, (error, stdout, stderr) => {
             if (stderr) {
                 console.error('Error retrieving video URL at /playvideo because of:', stderr);
-                return res.status(500).send('Failed to retrieve video URL, because of',error);
+                return res.status(500).json({ error: 'Failed to retrieve video URL', details: error.message });
+
             }
 
             if (stderr) {

@@ -192,6 +192,23 @@ router.post('/playYoutubeVideo', async (req, res) => {
         return res.status(400).send('Please provide a valid video URL.');
     }
 
+    fs.access(cookiesFilePath, fs.constants.F_OK, (err) => {
+        if (err) {
+          console.error(`File not found: ${cookiesFilePath}`);
+        } else {
+          console.log(`File exists: ${cookiesFilePath}`);
+        }
+      });
+
+      fs.readFile(cookiesFilePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error(`Error reading the file: ${err.message}`);
+        } else {
+          console.log(`Cookies file content: ${data.substring(0, 100)}...`); // Display first 100 characters
+        }
+      });
+      
+
     try {
         const getUrlCommand = `yt-dlp --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp -f "best[ext=mp4]" --get-url "${videoUrl}"`;
@@ -200,12 +217,16 @@ router.post('/playYoutubeVideo', async (req, res) => {
 
         exec(getUrlCommand, (error, stdout, stderr) => {
             if (stderr) {
-                console.error('Error retrieving video URL:', stderr);
-                return res.status(500).send('Failed to retrieve video URL, because of',stderr);
+                console.error('Error retrieving video URL at /playvideo because of:', stderr);
+                return res.status(500).send('Failed to retrieve video URL, because of',error);
             }
 
             if (stderr) {
-                console.log('yt-dlp stderr:', stderr);
+                console.log('yt-dlp stderr from /playvideo is:', stderr);
+            }
+
+            if (error) {
+                console.log(`error from /playvideo is: ${error}`);
             }
 
             const directVideoUrl = stdout.trim(); // Get the direct URL
@@ -831,6 +852,7 @@ router.post('/download-twitterVideo', async (req, res) => {
 
 
 // https://youtu.be/4lHAyiUuckY
+// https://www.youtube.com/watch?v=BEskYHiyl8E
 
 
 

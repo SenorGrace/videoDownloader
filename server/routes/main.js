@@ -24,6 +24,9 @@ const { CookieJar, Cookie } = require('tough-cookie');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegStatic = require('ffmpeg-static'); // Use ffmpeg-static
 const mime = require('mime-types'); // For dynamic MIME type determination
+
+const { execSync, exec } = require('child_process');
+
 //const { runApifyActor } = require('../apifyDownloader');  // Imported the Apify actor function
 // const { 
 //     getVideoUrlFromYoutube, 
@@ -42,12 +45,15 @@ const {
 const { chromium } = require('playwright'); // Ensure Playwright is installed
 
 // Path to store the YouTube cookies
-const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
+// const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
 // const cookiesFilePath = '../youtube_cookie.txt';
-// const screenShot = path.resolve(__dirname, 'screenshots');
+const encryptedFilePath = path.resolve(process.cwd(), 'youtube_cookies.txt.enc');
+console.log('Resolved encrypted file path:', encryptedFilePath);
+const decryptedFilePath = path.resolve(process.cwd(), 'temp_cookie.txt');
+console.log('Resolved encrypted file path:', decryptedFilePath);
+const decryptionPassword = process.env.COOKIE_PASSWORD;
 
 
-const { exec } = require('child_process');
 
 // Set ffmpeg-static path for fluent-ffmpeg
 ffmpeg.setFfmpegPath(ffmpegStatic);
@@ -187,58 +193,79 @@ router.get('/about', (req, res) => {
 
 router.post('/playYoutubeVideo', async (req, res) => {
     const videoUrl = req.body.videoUrl;
+    console.log("URL passed at /play is:", videoUrl);
 
     if (!videoUrl) {
         return res.status(400).send('Please provide a valid video URL.');
     }
 
-    fs.access(cookiesFilePath, fs.constants.F_OK, (err) => {
-        if (err) {
-          console.error(`File not found: ${cookiesFilePath}`);
-        } else {
-          console.log(`File exists: ${cookiesFilePath}`);
-        }
-      });
-
-      fs.readFile(cookiesFilePath, 'utf8', (err, data) => {
-        if (err) {
-          console.error(`Error reading the file: ${err.message}`);
-        } else {
-          console.log(`Cookies file content: ${data.substring(0, 100)}...`); // Display first 100 characters
-        }
-      });
-      
-        // Use read-only access
-        const cookiesData = fs.readFileSync(cookiesFilePath, 'utf8');
-
     try {
-        const getUrlCommand = `yt-dlp -v --cookies "${cookiesData}" --no-cache-dir -f "best[ext=mp4]" --get-url "${videoUrl}"`;
-        // const getUrlCommand = `yt-dlp --cookies-from-browser chrome -f "best[ext=mp4]" --get-url "${videoUrl}"`;
-        
+        // Decrypt the cookie file
+        console.log('Decrypting the cookie file...');
+        console.log('Encrypted file path being used:', encryptedFilePath);
+        console.log('Current working directory:', process.cwd());
+        execSync(
+            `openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -in ${encryptedFilePath} -out ${decryptedFilePath} -pass pass:${decryptionPassword}`
+        );
+        console.log('Cookie file decrypted successfully.');
 
-        console.log('at /playYoutubeVideo, const getUrlCommand is', getUrlCommand);
+        // Verify if the decrypted cookie file exists
+        if (!fs.existsSync(decryptedFilePath)) {
+            throw new Error('Decrypted cookie file not found.');
+        }
 
+        // Debugging: Read and log a portion of the decrypted cookie file
+        const cookieContent = fs.readFileSync(decryptedFilePath, 'utf8');
+        console.log(`Decrypted cookie file content (preview): ${cookieContent.substring(0, 100)}...`);
+
+        // Construct the yt-dlp command
+        const getUrlCommand = `yt-dlp --cookies "${decryptedFilePath}" --no-cache-dir -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        console.log('At /playYoutubeVideo, the command is:', getUrlCommand);
+
+        // Execute the yt-dlp command
         exec(getUrlCommand, (error, stdout, stderr) => {
-            if (stderr) {
-                console.error('Error retrieving video URL at /playvideo because of:', stderr);
-                return res.status(500).json({ error: 'Failed to retrieve video URL', details: error.message });
-
-            }
-
-            if (stderr) {
-                console.log('yt-dlp stderr from /playvideo is:', stderr);
-            }
+            // Clean up the decrypted cookie file
+            fs.unlink(decryptedFilePath, (err) => {
+                if (err) {
+                    console.warn('Failed to delete the decrypted cookie file:', err.message);
+                } else {
+                    console.log('Decrypted cookie file deleted.');
+                }
+            });
 
             if (error) {
-                console.log(`error from /playvideo is: ${error.message}`);
+                console.error('Error retrieving video URL:', error.message);
+                return res.status(500).json({
+                    error: 'Failed to retrieve video URL',
+                    details: error.message || 'Unknown error occurred during yt-dlp execution',
+                });
             }
 
-            const directVideoUrl = stdout.trim(); // Get the direct URL
+            if (stderr) {
+                console.log(`An stderr occured but I am not using : console.warn('yt-dlp stderr output:', stderr); because it is lenghty and i suspect exposes certain cookie contents `);
+            }
+
+            if (!stdout || stdout.trim() === '') {
+                return res.status(500).json({
+                    error: 'Failed to retrieve video URL',
+                    details: 'yt-dlp did not return a valid video URL',
+                });
+            }
+
+            const directVideoUrl = stdout.trim(); // Extract the direct video URL
+            console.log('Direct video URL retrieved:', directVideoUrl);
+
             res.json({ directVideoUrl }); // Send the URL to the client
         });
     } catch (error) {
-        console.error("Unexpected error:", error);
-        res.status(500).send("An error occurred while processing your request.");
+        console.error('Unexpected error:', error.message);
+
+        // Attempt to clean up the decrypted file in case of failure
+        if (fs.existsSync(decryptedFilePath)) {
+            fs.unlinkSync(decryptedFilePath);
+        }
+
+        res.status(500).send('An error occurred while processing your request.');
     }
 });
 
@@ -858,6 +885,7 @@ router.post('/download-twitterVideo', async (req, res) => {
 // https://youtu.be/4lHAyiUuckY
 // https://www.youtube.com/watch?v=BEskYHiyl8E
 // https://www.youtube.com/watch?v=ZpIel9cv4Jk
+// https://youtube.com/shorts/JOd2FBcirwk?si=mT7lopWzc6Ae8HWR
 
 
 

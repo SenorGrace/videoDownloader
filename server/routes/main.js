@@ -208,9 +208,12 @@ router.post('/playYoutubeVideo', async (req, res) => {
         }
       });
       
+        // Change permissions to read-only
+        fs.chmodSync(cookiesFilePath, 0o444); // Octal value for read-only
+        console.log('Permissions set to read-only.');
 
     try {
-        const getUrlCommand = `yt-dlp -v --cookies "${cookiesFilePath}" --no-save -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp -v --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp --cookies-from-browser chrome -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         
 
@@ -855,6 +858,7 @@ router.post('/download-twitterVideo', async (req, res) => {
 
 // https://youtu.be/4lHAyiUuckY
 // https://www.youtube.com/watch?v=BEskYHiyl8E
+// https://www.youtube.com/watch?v=ZpIel9cv4Jk
 
 
 

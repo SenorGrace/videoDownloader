@@ -212,7 +212,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
         const cookiesData = fs.readFileSync(cookiesFilePath, 'utf8');
 
     try {
-        const getUrlCommand = `yt-dlp -v --cookies "${cookiesData}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp -v --cookies "${cookiesData}" --no-cache-dir -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp --cookies-from-browser chrome -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         
 

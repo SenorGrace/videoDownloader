@@ -24,8 +24,6 @@ const { CookieJar, Cookie } = require('tough-cookie');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegStatic = require('ffmpeg-static'); // Use ffmpeg-static
 const mime = require('mime-types'); // For dynamic MIME type determination
-const os = require('os'); // Optional: For cross-platform support
-
 //const { runApifyActor } = require('../apifyDownloader');  // Imported the Apify actor function
 // const { 
 //     getVideoUrlFromYoutube, 
@@ -42,10 +40,6 @@ const {
     downloadtiktokVideo,
 } =require('../../public/js/tiktok');  // Adjust the path if necessary
 const { chromium } = require('playwright'); // Ensure Playwright is installed
-
-// Use the appropriate temp directory (cross-platform support)
-const tempDir = os.platform() === 'win32' ? os.tmpdir() : '/tmp'; // Fallback to /tmp for Unix
-const tempCookiesPath = path.join(tempDir, 'youtube_cookie_temp.txt');
 
 // Path to store the YouTube cookies
 const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
@@ -216,10 +210,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
       
 
     try {
-        // Step 1: Copy the original cookie file to a temporary location
-        fs.copyFileSync(cookiesFilePath, tempCookiesPath);
-        
-        const getUrlCommand = `yt-dlp -v --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp -v --cookies "${cookiesFilePath}" --no-save -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp --cookies-from-browser chrome -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         
 
@@ -246,16 +237,6 @@ router.post('/playYoutubeVideo', async (req, res) => {
     } catch (error) {
         console.error("Unexpected error:", error);
         res.status(500).send("An error occurred while processing your request.");
-    }finally {
-        // Step 3: Remove the temporary cookie file after execution
-        try {
-          if (fs.existsSync(tempCookiesPath)) {
-            fs.unlinkSync(tempCookiesPath);
-            console.log('Temporary cookies file deleted successfully.');
-          }
-        } catch (deleteError) {
-          console.error('Error deleting the temporary cookies file:', deleteError);
-        }
     }
 });
 

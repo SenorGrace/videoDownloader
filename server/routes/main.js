@@ -204,6 +204,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
         console.log('Decrypting the cookie file...');
         console.log('Encrypted file path being used:', encryptedFilePath);
         console.log('Current working directory:', process.cwd());
+        console.log('the decryption password is',decryptionPassword);
         execSync(
             `openssl enc -aes-256-cbc -pbkdf2 -iter 100000 -d -in ${encryptedFilePath} -out ${decryptedFilePath} -pass pass:${decryptionPassword}`
         );

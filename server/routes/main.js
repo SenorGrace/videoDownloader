@@ -208,12 +208,11 @@ router.post('/playYoutubeVideo', async (req, res) => {
         }
       });
       
-        // Change permissions to read-only
-        fs.chmodSync(cookiesFilePath, 0o444); // Octal value for read-only
-        console.log('Permissions set to read-only.');
+        // Use read-only access
+        const cookiesData = fs.readFileSync(cookiesFilePath, 'utf8');
 
     try {
-        const getUrlCommand = `yt-dlp -v --cookies "${cookiesFilePath}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
+        const getUrlCommand = `yt-dlp -v --cookies "${cookiesData}" -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         // const getUrlCommand = `yt-dlp --cookies-from-browser chrome -f "best[ext=mp4]" --get-url "${videoUrl}"`;
         
 

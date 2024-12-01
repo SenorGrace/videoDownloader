@@ -268,6 +268,17 @@ router.get('/about', (req, res) => {
 //     }
 // });
 
+//  Helper function to convert ISO 8601 date to UNIX timestamp
+const convertToUnixTimestamp = (isoDate) => {
+    try {
+        const date = new Date(isoDate);
+        if (isNaN(date.getTime())) return null; // Invalid date
+        return Math.floor(date.getTime() / 1000).toString(); // Convert to seconds and return as a string
+    } catch {
+        return null;
+    }
+};
+
 router.post('/playYoutubeVideo', async (req, res) => {
     const videoUrl = req.body.videoUrl;
     console.log("URL passed at /play is:", videoUrl);
@@ -307,7 +318,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
 
                 // Validate expiration date (5th field)
                 const expiration = parts[4];
-                if (isNaN(Date.parse(expiration))) return false;
+                if (!convertToUnixTimestamp(expiration)) return false;
 
                 return true; // Keep valid lines
             })
@@ -315,13 +326,16 @@ router.post('/playYoutubeVideo', async (req, res) => {
                 const parts = line.split('\t');
                 const [domain, flag, path, secure, expiration, name, value] = parts;
 
+                // Convert expiration to UNIX timestamp
+                const unixExpiration = convertToUnixTimestamp(expiration) || '0';
+
                 // Normalize missing fields
                 return [
                     domain,
                     flag || 'FALSE',
                     path || '/',
                     secure || 'FALSE',
-                    expiration,
+                    unixExpiration,
                     name,
                     value
                 ].join('\t');
@@ -382,6 +396,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
         res.status(500).send('An error occurred while processing your request.');
     }
 });
+
 
 
 router.post('/lowest-youtubequality', async (req, res) => {

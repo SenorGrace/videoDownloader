@@ -47,9 +47,9 @@ const { chromium } = require('playwright'); // Ensure Playwright is installed
 // Path to store the YouTube cookies
 // const cookiesFilePath = '/etc/secrets/youtube_cookie.txt';
 // const cookiesFilePath = '../youtube_cookie.txt';
-const encryptedFilePath = path.resolve(process.cwd(), 'youtube_cookies.txt.enc');
+const encryptedFilePath = path.resolve(process.cwd(), 'youtube_cookie.txt.enc');
 console.log('Resolved encrypted file path:', encryptedFilePath);
-const decryptedFilePath = path.resolve(process.cwd(), 'temp_cookie.txt');
+const decryptedFilePath = path.resolve(process.cwd(), 'test_cookie.txt');
 console.log('Resolved encrypted file path:', decryptedFilePath);
 const decryptionPassword = process.env.COOKIE_PASSWORD;
 

@@ -342,9 +342,13 @@ router.post('/playYoutubeVideo', async (req, res) => {
             })
             .join('\n');
 
-        // Write cleaned cookies back to the file
-        fs.writeFileSync(decryptedFilePath, cleanedCookies, 'utf8');
-        console.log('Cleaned cookie file written successfully.');
+        // Add the Netscape header to the cleaned cookies
+        const netscapeHeader = `# Netscape HTTP Cookie File\n# This is a generated file! Do not edit.\n`;
+        const updatedCookies = netscapeHeader + cleanedCookies;
+
+        // Write cleaned cookies with header back to the file
+        fs.writeFileSync(decryptedFilePath, updatedCookies, 'utf8');
+        console.log('Cleaned cookie file with Netscape header written successfully.');
 
         // Construct the yt-dlp command
         const getUrlCommand = `yt-dlp --cookies "${decryptedFilePath}" --no-cache-dir -f "best[ext=mp4]" --get-url "${videoUrl}"`;
@@ -353,6 +357,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
         // Execute the yt-dlp command
         exec(getUrlCommand, (error, stdout, stderr) => {
             // Clean up the decrypted cookie file
+
             fs.unlink(decryptedFilePath, (err) => {
                 if (err) {
                     console.warn('Failed to delete the decrypted cookie file:', err.message);
@@ -396,6 +401,7 @@ router.post('/playYoutubeVideo', async (req, res) => {
         res.status(500).send('An error occurred while processing your request.');
     }
 });
+
 
 
 
